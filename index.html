@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>ARPA Lombardia Graph Wrapper</title>
+
+<style>
+
+html,
+body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:white;
+}
+
+#frameContainer{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+#graphFrame{
+    border:none;
+    transform-origin:top left;
+}
+
+#error{
+    padding:20px;
+    font-family:Arial,sans-serif;
+    color:red;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="frameContainer">
+    <iframe id="graphFrame"></iframe>
+</div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+const codice = params.get('codice');
+const id = params.get('id');
+const tipo = params.get('tipo');
+
+const scale = parseFloat(params.get('scale') || '0.75');
+
+const originalHeight = parseInt(params.get('sourceHeight') || '600');
+const visibleHeight = parseInt(params.get('height') || '300');
+
+if(!codice || !id || !tipo){
+    document.body.innerHTML =
+        '<div id="error">Parametri mancanti. Esempio: ?codice=865&id=8119&tipo=I</div>';
+}
+else{
+
+    const iframe = document.getElementById('graphFrame');
+    const container = document.getElementById('frameContainer');
+
+    const widthPercent = (100 / scale);
+
+    iframe.style.width = widthPercent + '%';
+    iframe.style.height = originalHeight + 'px';
+
+    iframe.style.transform = 'scale(' + scale + ')';
+
+    container.style.height = visibleHeight + 'px';
+
+    iframe.src =
+        'https://iris.arpalombardia.it/gisINM/open-scripts/plot_rete_iris_lm_guest.php' +
+        '?codice_istat=' + codice +
+        '&progr_punto_com={' + id + '}' +
+        '&id_parametro=' + tipo + '|' + id +
+        '&root_dir_html=/gisINM';
+}
+
+</script>
+
+</body>
+</html>
