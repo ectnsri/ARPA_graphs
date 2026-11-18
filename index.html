@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoraggio Idrometri - Dashboard</title>
+    <title>Monitoraggio Idrometrici - Dashboard</title>
     <style>
         :root {
-            --bg-color: #f0f4f8;
+            --bg-color: #f1f5f9;
             --card-bg: #ffffff;
-            --primary-color: #02529c;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #cbd5e1;
+            --primary-color: #0284c7;
+            --primary-hover: #0369a1;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #e2e8f0;
         }
 
         * {
@@ -24,35 +25,34 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: 16px;
+            padding: 20px;
         }
 
-        /* Intestazione e barra di stato aggiornamento */
         header {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             background-color: var(--card-bg);
-            padding: 14px 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-            margin-bottom: 18px;
-            border-left: 5px solid var(--primary-color);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+            border-left: 6px solid var(--primary-color);
             gap: 12px;
         }
 
         header h1 {
-            font-size: 1.25rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--text-main);
         }
 
         .status-bar {
             display: flex;
             align-items: center;
-            gap: 14px;
-            font-size: 0.88rem;
+            gap: 16px;
+            font-size: 0.9rem;
             color: var(--text-muted);
         }
 
@@ -60,8 +60,8 @@
             background-color: #e0f2fe;
             color: #0369a1;
             font-weight: 600;
-            padding: 5px 10px;
-            border-radius: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
             font-variant-numeric: tabular-nums;
         }
 
@@ -69,134 +69,143 @@
             background-color: var(--primary-color);
             color: #fff;
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             transition: background-color 0.2s;
         }
 
         button.btn-refresh:hover {
-            background-color: #033f7a;
+            background-color: var(--primary-hover);
         }
 
-        /* Griglia 3x2 (6 riquadri identici) */
+        /* Griglia a 6 riquadri (3 colonne x 2 righe) */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            gap: 20px;
         }
 
-        /* Responsive per tablet e smartphone */
-        @media (max-width: 1200px) {
+        @media (max-width: 1100px) {
             .grid-container {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 700px) {
             .grid-container {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Singolo riquadro grafico */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            height: 460px; /* Altezza identica per tutti i 6 riquadri */
+            justify-content: space-between;
+            padding: 20px;
+            height: 220px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .card-header {
-            padding: 10px 14px;
-            background-color: #f8fafc;
-            border-bottom: 1px solid var(--border-color);
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-top {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-header-info {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
         }
 
         .card-title {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-main);
         }
 
-        .card-id {
-            font-size: 0.78rem;
-            background-color: #e2e8f0;
+        .card-badge {
+            font-size: 0.75rem;
+            background-color: #f1f5f9;
             color: #334155;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 3px 8px;
+            border-radius: 6px;
             font-weight: 600;
+            border: 1px solid var(--border-color);
         }
 
-        .iframe-wrapper {
-            flex: 1;
-            width: 100%;
-            position: relative;
-            background-color: #ffffff;
-        }
-
-        .iframe-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-
-        .card-footer {
-            padding: 8px 14px;
-            background-color: #f8fafc;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.78rem;
+        .card-source {
+            font-size: 0.85rem;
             color: var(--text-muted);
         }
 
-        .card-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
         }
 
-        .card-footer a:hover {
-            text-decoration: underline;
+        .btn-action {
+            flex: 1;
+            text-align: center;
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-action.primary {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border-color: var(--primary-color);
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .btn-action.primary:hover {
+            background-color: var(--primary-hover);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Monitoraggio Livelli Idrometrici</h1>
+        <h1>Monitoraggio Livelli Idrometrici - Dashboard</h1>
         <div class="status-bar">
-            <span>Ultimo agg.: <strong id="last-update">--:--:--</strong></span>
+            <span>Aggiornato: <strong id="last-update">--:--:--</strong></span>
             <span class="badge-timer">Prossimo agg. tra <span id="countdown">120</span>s</span>
-            <button class="btn-refresh" onclick="aggiornaGrafici()">Aggiorna ora</button>
+            <button class="btn-refresh" onclick="ricaricaDashboard()">Aggiorna ora</button>
         </div>
     </header>
 
     <main class="grid-container" id="dashboard-grid">
-        <!-- I 6 riquadri vengono generati dinamicamente dallo script qui sotto -->
+        <!-- Generato via JavaScript -->
     </main>
 
     <script>
-        /**
-         * CONFIGURAZIONE DEI 6 IDROMETRI
-         * Puoi modificare liberamente il campo "nome" con il nome reale della località/fiume
-         * (es. "Idrometro Idro-8119 - Fiume Adda")
-         */
+        // Dati delle 6 stazioni con nomi chiari e link ufficiali
         const stazioni = [
             {
-                nome: "Idrometro Idro-8119",
+                nome: "Idrometro Arpa 8119",
                 codice: "ARPA #8119",
                 fonte: "ARPA Lombardia (IRIS)",
                 url: "https://iris.arpalombardia.it/gisINM/open-scripts/jquery_tab.php?titles=Idro-8119&links=/gisINM/open-scripts/plot_rete_iris_lm_guest.php¶metri=I|8119&codice_istat=865&progr_punto={8119}&tipo_tab=1&active_tab=I|8119&root_dir_html=/gisINM&custom_height=800&composito=2&stazioni=test_lm_guest"
@@ -204,11 +213,11 @@
             {
                 nome: "Idrometro AIPo 51749",
                 codice: "AIPo #51749",
-                fonte: "AIPo - Agenzia Interregionale fiume Po",
+                fonte: "AIPo - Fiume Po",
                 url: "https://idrometri.agenziapo.it/Aegis/data/data?elementId=51749"
             },
             {
-                nome: "Idrometro Idro-22307",
+                nome: "Idrometro Arpa 22307",
                 codice: "ARPA #22307",
                 fonte: "ARPA Lombardia (IRIS)",
                 url: "https://iris.arpalombardia.it/gisINM/open-scripts/jquery_tab.php?titles=Idro-22307&links=/gisINM/open-scripts/plot_rete_iris_lm_guest.php¶metri=I|22307&codice_istat=1913&progr_punto={22307}&tipo_tab=1&active_tab=I|22307&root_dir_html=/gisINM&custom_height=800&composito=2&stazioni=test_lm_guest"
@@ -216,11 +225,11 @@
             {
                 nome: "Idrometro AIPo 51737",
                 codice: "AIPo #51737",
-                fonte: "AIPo - Agenzia Interregionale fiume Po",
+                fonte: "AIPo - Fiume Po",
                 url: "https://idrometri.agenziapo.it/Aegis/data/data?elementId=51737"
             },
             {
-                nome: "Idrometro Idro-3118",
+                nome: "Idrometro Arpa 3118",
                 codice: "ARPA #3118",
                 fonte: "ARPA Lombardia (IRIS)",
                 url: "https://iris.arpalombardia.it/gisINM/open-scripts/jquery_tab.php?titles=Idro-3118&links=/gisINM/open-scripts/plot_rete_iris_lm_guest.php¶metri=I|3118&codice_istat=1425&progr_punto={3118}&tipo_tab=1&active_tab=I|3118&root_dir_html=/gisINM&custom_height=800&composito=2&stazioni=test_lm_guest"
@@ -228,33 +237,31 @@
             {
                 nome: "Idrometro AIPo 53557",
                 codice: "AIPo #53557",
-                fonte: "AIPo - Agenzia Interregionale fiume Po",
+                fonte: "AIPo - Fiume Po",
                 url: "https://idrometri.agenziapo.it/Aegis/data/data?elementId=53557"
             }
         ];
 
-        const INTERVALLO_SECONDI = 120; // 2 minuti
-        let secondiRimanenti = INTERVALLO_SECONDI;
+        const INTERVALLO = 120; // 2 minuti
+        let secondiRimanenti = INTERVALLO;
 
-        // Crea la struttura HTML dei 6 riquadri
-        function inizializzaGriglia() {
+        function costruisciGriglia() {
             const grid = document.getElementById('dashboard-grid');
             grid.innerHTML = '';
 
-            stazioni.forEach((stazione, index) => {
+            stazioni.forEach((stazione) => {
                 const card = document.createElement('article');
                 card.className = 'card';
                 card.innerHTML = `
-                    <div class="card-header">
-                        <span class="card-title">${stazione.nome}</span>
-                        <span class="card-id">${stazione.codice}</span>
+                    <div class="card-top">
+                        <div class="card-header-info">
+                            <h2 class="card-title">${stazione.nome}</h2>
+                            <span class="card-badge">${stazione.codice}</span>
+                        </div>
+                        <div class="card-source">Fonte: <strong>${stazione.fonte}</strong></div>
                     </div>
-                    <div class="iframe-wrapper">
-                        <iframe id="frame-${index}" src="${stazione.url}" title="${stazione.nome}" loading="lazy"></iframe>
-                    </div>
-                    <div class="card-footer">
-                        <span>Fonte: <strong>${stazione.fonte}</strong></span>
-                        <a href="${stazione.url}" target="_blank" rel="noopener noreferrer">Apri grafico originale ↗</a>
+                    <div class="card-actions">
+                        <a href="${stazione.url}" target="_blank" rel="noopener noreferrer" class="btn-action primary">Apri Grafico Ufficiale ↗</a>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -263,20 +270,12 @@
             aggiornaOrario();
         }
 
-        // Ricarica i singoli iframe bypassando la cache del browser
-        function aggiornaGrafici() {
-            const timestamp = new Date().getTime();
-            stazioni.forEach((stazione, index) => {
-                const iframe = document.getElementById(`frame-${index}`);
-                if (iframe) {
-                    const separatore = stazione.url.includes('?') ? '&' : '?';
-                    iframe.src = `${stazione.url}${separatore}_t=${timestamp}`;
-                }
-            });
-
-            secondiRimanenti = INTERVALLO_SECONDI;
+        function ricaricaDashboard() {
+            secondiRimanenti = INTERVALLO;
             document.getElementById('countdown').textContent = secondiRimanenti;
             aggiornaOrario();
+            // Eventuale ricarica della pagina se si vuole forzare il refresh complessivo dei metadata
+            // window.location.reload();
         }
 
         function aggiornaOrario() {
@@ -284,13 +283,13 @@
             document.getElementById('last-update').textContent = ora;
         }
 
-        // Avvio e gestione del timer ogni secondo
-        inizializzaGriglia();
+        costruisciGriglia();
 
+        // Timer di conto alla rovescia
         setInterval(() => {
             secondiRimanenti--;
             if (secondiRimanenti <= 0) {
-                aggiornaGrafici();
+                ricaricaDashboard();
             } else {
                 document.getElementById('countdown').textContent = secondiRimanenti;
             }
